@@ -1,0 +1,37 @@
+{
+  "name": "sync-backup",
+  "version": "0.1.0",
+  "description": "Program to automate a copy of your backup files to AWS",
+  "main": "loader.js",
+  "scripts": {
+    "start": "node loader.js",
+    "sync": "node ./bin/sync.backup.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gmreis/sync-backup.git"
+  },
+  "keywords": [
+    "aws",
+    "s3",
+    "nodejs",
+    "backup"
+  ],
+  "author": "Geraldo Mateus Reis",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gmreis/sync-backup/issues"
+  },
+  "homepage": "https://github.com/gmreis/sync-backup#readme",
+  "dependencies": {
+    "aws-sdk": "^2.207.0",
+    "commander": "^2.15.0",
+    "md5-file": "^3.2.3",
+    "moment": "^2.21.0",
+    "sequelize": "^4.37.1",
+    "split": "^1.0.1",
+    "sqlite3": "^4.0.0",
+    "winston": "^2.4.1"
+  }
+}
