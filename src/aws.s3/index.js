@@ -1,3 +1,6 @@
+module.exports = require('./aws.s3');
+/*
+
 // Load the SDK for JavaScript
 var AWS = require('aws-sdk');
 
@@ -66,3 +69,4 @@ s3.upload (uploadParams, function (err, data) {
     console.log("Upload Success", data.Location);
   }
 });
+*/

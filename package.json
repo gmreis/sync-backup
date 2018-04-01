@@ -4,9 +4,9 @@
   "description": "Program to automate a copy of your backup files to AWS",
   "main": "loader.js",
   "scripts": {
-    "start": "node loader.js",
+    "start": "node ./bin/start.js",
     "sync": "node ./bin/sync.backup.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node loader.js"
   },
   "repository": {
     "type": "git",
@@ -29,6 +29,7 @@
     "commander": "^2.15.0",
     "md5-file": "^3.2.3",
     "moment": "^2.21.0",
+    "node-crontab": "0.0.8",
     "sequelize": "^4.37.1",
     "split": "^1.0.1",
     "sqlite3": "^4.0.0",
