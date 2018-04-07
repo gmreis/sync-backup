@@ -2,21 +2,21 @@ const Cron = require('node-crontab');
 const Sync = require('./../sync/sync.service');
 const TaskService = require('./../task/task.service');
 
-let scheduleJobs = [];
+let scheduledJobs = [];
 
-const addTask = (task) => {
-  const job = Cron.scheduleJob(task.schedule, Sync.execTask, [task]);
-  scheduleJobs.push({job, task});
+const scheduleJob = (task) => {
+    const job = Cron.scheduleJob(task.schedule, Sync.execTask, [task]);
+    scheduledJobs.push({ job, task });
 }
 
 const updateTask = (_task) => {
-    const indexScheduleJob = scheduleJobs.findIndex((scheduleJob) => scheduleJob.task.id === _task.id);
-    
-    if (indexScheduleJob > -1) {
-        Cron.cancelJob(scheduleJobs[indexScheduleJob].job);
-        scheduleJobs.splice(indexScheduleJob, 1);
+    const indexScheduledJob = scheduledJobs.findIndex((scheduledJob) => scheduledJob.task.id === _task.id);
+
+    if (indexScheduledJob > -1) {
+        Cron.cancelJob(scheduledJobs[indexScheduledJob].job);
+        scheduledJobs.splice(indexScheduledJob, 1);
     }
-    
+
     addTask(_task);
 }
 
@@ -24,7 +24,7 @@ const init = () => {
     TaskService.findAll()
         .then((tasks) => {
             console.log(tasks);
-            tasks.forEach(task => addTask(task));
+            tasks.forEach(task => scheduleJob(task));
         })
         .catch((err) => console.error(err));
 }
