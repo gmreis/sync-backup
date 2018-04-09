@@ -40,6 +40,24 @@ const sendFile = (_file) => {
       */
 }
 
+const { fork } = require('child_process');
+
+const sync = () => {
+    if(filesToSend.length) {
+        const fileObj = filesToSend.shift();
+        console.log('Enviando...', fileObj.file.name);
+        //const syncFile = fork('./src/zzteste/enviar.js', [fileObj]);
+        const syncFile = fork('./bin/sync.backup.js', ['fileBySync']);
+
+        syncFile.on('message', (answerAWS) => {
+            console.log('OK, funcionou...', fileObj);
+            //FileService.fileSent(fileObj.file, answerAWS)
+            sync();
+        });
+        syncFile.send(fileObj);
+    }
+}
+/*
 const sync = () => {
     const fileObj = filesToSend.shift();
     console.log('Enviando...', fileObj.file.name);
@@ -59,11 +77,13 @@ const sync = () => {
         })
         .then(() => filesToSend.length ? sync() : false);
 }
+*/
 
 const execTask = (task) => {
     switch(task.type) {
         case 'FOLDER':
             const files = fs.readdirSync(task.path);
+            console.log('Files', files);
             FileService.checkFiles(task, files)
               .then((filesWithoutSync) => {
                 const start = filesToSend.length === 0;
