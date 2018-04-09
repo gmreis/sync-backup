@@ -1,44 +1,8 @@
 var fs =  require('fs');
 
-const database = require('./../config/database');
 const FileService = require('./../file/file.service');
 
-const S3 = require('./../aws.s3');
-
 const filesToSend = [];
-
-const init = () => {
-  return database.authenticate();
-//          .then(() => AWS.init());
-}
-
-const sendFile = (_file) => {
-
-    return init()
-        .then(() => {
-            return {
-                Location: 'https://postomutum.s3.amazonaws.com/df2d01c2e63680b1772dbaac832537ac',
-                Bucket: 'postomutum',
-                Key: 'df2d01c2e63680b1772dbaac832537ac',
-                ETag: '"9cbfca02c1f63e671a09df951bb224fe-6"'
-              }
-        })
-
-    /*
-    const filePath = `${_file.path}/${_file.name}`;
-    return init()
-      .then(() => fs.existsSync(filePath))
-      .then(() => fs.createReadStream(filePath))
-      .then((buffer) => {
-        console.log('Pegar o Bucket daqui:', _file)
-        return S3.findOrCreateBucket('postomutum')
-          .then((bucket) => S3.uploadFile(bucket.Name, buffer))
-          .catch((err) => {
-            console.log('Erro', err);
-          });
-      });
-      */
-}
 
 const { fork } = require('child_process');
 
@@ -46,15 +10,16 @@ const sync = () => {
     if(filesToSend.length) {
         const fileObj = filesToSend.shift();
         console.log('Enviando...', fileObj.file.name);
-        //const syncFile = fork('./src/zzteste/enviar.js', [fileObj]);
         const syncFile = fork('./bin/sync.backup.js', ['fileBySync']);
 
         syncFile.on('message', (answerAWS) => {
-            console.log('OK, funcionou...', fileObj);
-            //FileService.fileSent(fileObj.file, answerAWS)
+            console.log('Arquivo enviado com sucesso:', answerAWS);
+
+            // TODO: E se der erro no envio do arquivo???
+
             sync();
         });
-        syncFile.send(fileObj);
+        syncFile.send(fileObj.file);
     }
 }
 /*

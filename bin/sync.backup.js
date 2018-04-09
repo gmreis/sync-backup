@@ -34,35 +34,26 @@ program
   .description('Command to import all tasks')
   .action((cmd) => {
     logger.info(`Sync ${cmd.name()}...`);
-    if (process.connected) {
-      process.on('message', (objFile) => {
-        console.log('Message from parent:', objFile);
 
+    if (process.connected) {
+      process.on('message', (file) => {
         const start = new Moment();
         logger.info(`Start Sync ${cmd.name()}:`, start.format('YYYY-MM-DD HH:mm:ss'));
 
-        setTimeout(() => {
-            process.send({
-                Location: 'https://postomutum.s3.amazonaws.com/df2d01c2e63680b1772dbaac832537ac',
-                Bucket: 'postomutum',
-                Key: 'df2d01c2e63680b1772dbaac832537ac',
-                ETag: '"9cbfca02c1f63e671a09df951bb224fe-6"'
-              });
-        }, 2000);
+        const S3 = require('./../src/aws/aws.s3');
+        S3.sendFile(file.bucket, `${file.path}/${file.name}`)
+          .then((answerAWS) => {
+            process.send(answerAWS);
+          })
+          .catch((err) => {
+            process.send(err);
+          });
       });
+
     } else {
       logger.info('Esse comando é utilizado pelo sistema. Você não pode executar esse comando.');
     }
-/*
-    SyncBackup.backupByFile(pathFile)
-      .then(() => {
-        const end = new Moment();
-        logger.info(`End Sync ${cmd.name()}:`, end.format('YYYY-MM-DD HH:mm:ss'));
 
-        const duration = Moment.utc(end.diff(start)).format('HH:mm:ss.SSS');
-        logger.info('Total Time:', duration);
-      });
-*/
   });
 
 // Assert that a VALID command is provided
