@@ -60,21 +60,17 @@ const findOrCreateBucket = (bucketName) => {
 };
 
 const sendFile = (bucketName, filePath) => {
-  const buffer = fs.createReadStream(filePath);
-  /*
-    TODO: Verificar se o arquivo existe...
+  if(fs.existsSync(filePath) && fs.lstatSync(filePath).isFile()) {
+    const buffer = fs.createReadStream(filePath);
 
-    .then((buffer) => {
-      buffer.on('error', function(err) {
-        console.log('File Error', err);
-      });
-    })
-  */
-  return findOrCreateBucket(bucketName)
-        .then((bucket) => uploadFile(bucket.Name, buffer))
-        .catch((err) => {
-          console.log('Erro', err);
-        });
+    return findOrCreateBucket(bucketName)
+          .then((bucket) => uploadFile(bucket.Name, buffer))
+          .catch((err) => {
+            console.log('Erro', err);
+          });
+  } else {
+    return new Promise((resolve, reject) => { return reject(`File don't exist or it's directory!`) });
+  }
 }
 
 const uploadFile = (bucketName, fileStream) => {
