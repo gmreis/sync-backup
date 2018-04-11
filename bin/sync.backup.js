@@ -9,27 +9,27 @@ program
   .description('Gerenciador de Backup AWS S3');
 
 program
-  .command('file <pathFile>')
+  .command('file <bucket> <pathFile>')
   .option('-d, --debugger')
   .description('Command to send file to S3 AWS')
-  .action((pathFile, cmd) => {
+  .action((bucket, pathFile, cmd) => {
     const start = new Moment();
 
     logger.info(`Sync ${cmd.name()}:`, pathFile);
     logger.info(`Start Sync ${cmd.name()}:`, start.format('YYYY-MM-DD HH:mm:ss'));
 
-    S3.sendFile('postomutum', pathFile)
+    S3.sendFile(bucket, pathFile)
       .then((answerAWS) => {
         const end = new Moment();
 
-        logger.info(`Answer AWS: ${answerAWS}`);
+        logger.info('Answer AWS:', answerAWS);
 
         logger.info(`End Sync ${cmd.name()}:`, end.format('YYYY-MM-DD HH:mm:ss'));
         const duration = Moment.utc(end.diff(start)).format('HH:mm:ss.SSS');
         logger.info('Total Time:', duration);
       })
       .catch((err) => {
-        logger.error(err);
+        logger.error(err.message);
       });
 
   });
