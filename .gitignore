@@ -59,3 +59,6 @@ typings/
 
 # API key from Aws
 cred.json
+
+# Sqlite
+*.sqlite
